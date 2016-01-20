@@ -209,15 +209,16 @@ Bundle 'Lokaltog/powerline'
 Bundle 'tpope/vim-fugitive'
 Bundle 'ctrlpvim/ctrlp.vim'
 Bundle 'tacahiroy/ctrlp-funky'
+Bundle 'Tagbar'
 
-"Set NERDTree
-map <C-o> :NERDTreeToggle<CR>
+" ===NERDTree Setting===
+map <Leader>n :NERDTreeToggle<CR>
 function! NERDTreeHighlightFile(extension, fg, bg, guifg, guibg)
 exec 'autocmd filetype nerdtree highlight ' . a:extension .' ctermbg='.a:bg.' ctermfg='. a:fg .' guibg='. a:guibg .' guifg='. a:guifg
 exec 'autocmd filetype nerdtree syn match ' . a:extension .'#^\s\+.*'.a:extension .'$#'
 endfunction
 
-"Set ctrlpvim
+" ===Ctrlpvim Setting===
 let g:ctrlp_map = '<leader>p'
 let g:ctrlp_cmd = 'CtrlP'
 map <Leader>f :CtrlPMRU<CR>
@@ -232,8 +233,15 @@ let g:ctrlp_match_window_reversed=0
 let g:ctrlp_mruf_max=500
 let g:ctrlp_follow_symlinks=1
 
-"Set ctrlpfunky
+" ===Ctrlpfunky Setting===
 nnoremap <Leader>fu :CtrlPFunky<Cr>
 nnoremap <Leader>fU :execute 'CtrlPFunky ' . expand('<cword>')<Cr>
 let g:ctrlp_funky_syntax_highlight = 1
 let g:ctrlp_extensions = ['funky']
+
+" ===Tagbar Setting===
+nmap <Leader>tb :TagbarToggle<CR>   
+let g:tagbar_ctags_bin="~/.vim/ctags"
+let g:tagbar_width = 20     
+let g:tagbar_left = 1
+let NERDTreeIgnore=['\.pyc', '\.pyo', '\.swp', '\~']
