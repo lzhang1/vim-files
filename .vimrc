@@ -1,172 +1,159 @@
 "========================================================
-" Terminal settings
-filetype off
-filetype plugin indent on    " required
+"" 显示相关
+"========================================================
+" 开启文件探测、插件及缩进
+filetype plugin indent on 
 
-" Set the terminal title
-set title
-
-" Use vim not vi
+" 不兼容模式
 set nocompatible
 
-" Use my color preferences
+" 设置颜色方案
 set background=dark
-colorscheme markus
+colorscheme solarized
+let g:solarized_termtrans=1
 
-" Use syntax colors
+" 语法高亮
 syntax enable
 
-" Set terminal colors
-let g:solarized_termtrans=1
-let g:solarized_termcolors=256
-let g:solarized_contrast="high"
-let g:solarized_visibility="high"
-set modelines=5
-set t_Co=256
-
-" Set tab
+" 设置tab宽度为4
 set tabstop=4
+
+" 统一缩进为4
 set shiftwidth=4
 set softtabstop=4
 set expandtab
 
-" Use UTF-8
+" 设置字符编码方式
 set encoding=utf-8
 set termencoding=utf-8
 set fileencoding=utf-8
 
-" Automatically write buffer before special actions
+" 自动保存
 set autowrite
 
-" Command line history
+" 历史记录数
 set history=1000
 
-" Highlight matches
+" 搜索匹配项高亮显示
 set hlsearch
 
-" Set statusline
-set statusline=%F%m%r%h%w\ %y\ [pos=%l,%v]\ [len=%L\ (%p%%)]
+" 搜索忽略大小写
+set ignorecase
 
-" Don't move cursor to first line when scrolling
+" 设置状态行 
+set statusline=%F%m%r%h%w\ %y\ [pos=%l,%v]\ [len=%L\ (%p%%)]
+set laststatus=2
+
+" 滚动时光标不移动到行首
 set nostartofline
 
-" Want mouse support
+" 支持鼠标
 set mouse=a
-
+" 
 " Maintain some more context around the cursor
-set scrolloff=3
-set sidescrolloff=3
+set scrolloff=999
+set sidescrolloff=999
 
-" Show line numbers
+" 显示行号
 set number
 
 " Don't wrap words
 set textwidth=0
 
-" Set width of number
+" 行号宽度为4
 set numberwidth=4
 
-" Set size of window
-set columns=135
-set lines=50
+" 自动重新读入
+set autoread
+
+" 设置窗口
+set columns=120
+set lines=40
 winpo 620 45
+
+" 设置折叠
+set foldenable
+set foldmethod=manual
+nnoremap <space> @=((foldclosed(line('.')) < 0) ? 'zc' : 'zo')<CR>
 
 
 " ========================================================
-" Leader settings
+"" Gvim设置
+" ========================================================
+let g:tex_flavor='latex'
+if has("gui running")
+    let g:isGUI = 1 
+else
+    let g:isGUI = 0
+endif
+" Remove GUI-nonsense
+if g:isGUI
+    winpos 100 10
+    set lines=38 columns=120
+    set guifont=Monospace\ 11
+    colorscheme markus
+    set guioptions-=T
+    set guioptions-=m
+    set guioptions-=r
+    set guioptions-=R
+    set guioptions-=l
+    set guioptions-=L
+endif
 
-" Ex-mode is pretty dumb, remap Q to reformat the current paragraph
-nnoremap Q gqip
+" ========================================================
+"" 创建文件相关
+" ========================================================
+" Add file head
+au BufRead,BufNewFile *.sh setfiletype sh
+au BufRead,BufNewFile *.py setfiletype python
+autocmd BufNewFile *.py,*.sh exec ":call SetTitle()" 
+func SetTitle() 
+    call setline(1,"\#########################################################################") 
+    call append(line("."), "\# File Name: ".expand("%")) 
+    call append(line(".")+1, "\# Description: ") 
+    call append(line(".")+2, "\# Author: zhanglei") 
+    call append(line(".")+3, "\# Mail: zhlei315@163.com") 
+    call append(line(".")+4, "\# Created_Time: ".strftime("%Y-%m-%d %H:%M:%S")) 
+    call append(line(".")+5, "\# Last modified: ".strftime("%Y-%m-%d %H:%M:%S"))
+    if &filetype == 'python'
+        call append(line(".")+6, "\#!/usr/bin/env python")
+        call append(line(".")+7, "\# -*- coding: utf-8 -*-")
+        call append(line(".")+8, "\#########################################################################") 
+        call append(line(".")+9, "") 
+    else
+        call append(line(".")+6, "\#!/bin/bash")
+        call append(line(".")+7, "\#########################################################################") 
+        call append(line(".")+8, "")
+    endif
+    autocmd BufNewFile * normal G
+endfunc
 
-" Function key settings - 'make'-shortcuts
-map <F5> :cp<CR>
-map <F6> :cn<CR>
-" Have <F2> toggle paste
-set pastetoggle=<F2>
+" ========================================================
+"" 快捷键设置
+" ========================================================
 
-" Have <F3> toggle spelling mode
-nmap <F3> :setlocal invspell spelllang=en_us<CR>
-
-" , is a more convenient leader than \
+" 设置leader
 let maplocalleader = ",,"
 let mapleader = ","
 
-" Underline the current line with - in normal mode
+" 快速保存
+nnoremap <leader>w :w!<CR>
+
+" 进入V模式
+nnoremap <leader><leader> V
+
+
+" Normal模式下,添加'---'线
 nnoremap <leader>u yyp<c-v>$r-
 
-" Underline the current line with = in normal mode
+" Normal模式下,添加'==='线
 nnoremap <leader>U yyp<c-v>$r=
 
-" OCaml stuff
-let no_ocaml_comments = 1
-set makeprg=ocamlbuild\ ${BUILDFLAGS}\ -use-ocamlfind\ all.otarget
-"set makeprg=omake\ -j\ 8
-
-" Tex stuff
-" Please refer to:
-" http://vim-latex.sourceforge.net/index.php?subject=download&title=Download
-"
-" IMPORTANT: win32 users will need to have 'shellslash' set so that latex
-" can be called correctly.
-set shellslash
-
-" IMPORTANT: grep will sometimes skip displaying the file name if you
-" search in a singe file. This will confuse Latex-Suite. Set your grep
-" program to always generate a file-name.
-set grepprg=grep\ -nH\ $*
-
-" OPTIONAL: Starting with Vim 7, the filetype of empty .tex files defaults to
-" 'plaintex' instead of 'tex', which results in vim-latex not being loaded.
-" The following changes the default filetype back to 'tex':
-let g:tex_flavor='latex'
-
-" Remove GUI-nonsense
-set guioptions-=T
-set guioptions-=m
-set guioptions-=r
-set guioptions-=R
-set guioptions-=l
-set guioptions-=L
-
-" Always show the menu, insert longest match
-set completeopt=menu,longest
-
-" Ignore irrelevant suffixes for filename completion
-set wildignore+=*.a,*.bak,*~,*.swp,*.o,*.info,*.aux,*.dvi,*.bbl,*.blg,*.brf,*.cb,*.ind,*.idx,*.ilg,*.inx,*.out,*.toc,*.cmi,*.cmo,*.cma,*.cmx,*.cmxa,$.cmxs,*.omc,*.annot,*.exe,*.native,*.byte,*.bc,*.sums,*.spit,*.spot
-
-" Change directories automatically
-autocmd BufEnter * lcd %:p:h
-
-" When editing a file, always jump to the last known cursor position.
-" Don't do it when the position is invalid or when inside an event handler
-" (happens when dropping a file on gvim).
+" 定位到最近一次cursor位置
 autocmd BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$") | exe "normal g`\"" | endif
 
-" Our shell code looks like a scheme programmer made up all the names
-autocmd FileType sh set iskeyword=~,@,48-57,_,192-255,-
-
-" Set location for NetrW bookmarks and history
-let g:netrw_home=$HOME
-
-" Syntastic
-" let g:syntastic_ocaml_use_ocamlc = 1
-let g:syntastic_ocaml_use_ocamlbuild = 1
-let g:syntastic_ocaml_checkers = ['merlin']
-
-" Currently disabled
-" let g:pathogen_disabled = ['syntastic', 'ocamlmerlin']
-set ofu=syntaxcomplete#Complete
-
-" Load Pathogen
-call pathogen#infect()
-
-" Load matchit
-runtime! macros/matchit.vim
-
-" SnipMate stuff
-let g:snips_author = 'Zhang Lei'
-
 " MRU-functionality
+"
 nnoremap <leader>m :MRU<CR>
 
 " FuF-functionality
@@ -184,41 +171,39 @@ nnoremap <leader>M :make<CR>
 " Turn off match highlighting
 nnoremap <leader>h :nohlsearch<CR>
 
-" Save quickly
-nnoremap <leader>w :w<CR>
-
-" ocp-indent - handled in "after/indent" now
-" autocmd FileType ocaml source ~/.opam/4.01.1/share/typerex/ocp-indent/ocp-indent.vim
-
-if filereadable(expand('~/.vimrc_local'))
-  source ~/.vimrc_local
-endif
-
+" Expand region
+map K <Plug>(expand_region_expand)
+map J <Plug>(expand_region_shrink)
 
 "========================================================
-" Plugin Settings
+"" 插件管理 Vundle
+"========================================================
 set rtp+=~/.vim/bundle/vundle
 call vundle#rc()
 Bundle 'gmarik/vundle'
 " Install plugins
 Bundle 'fatih/vim-go'
-Bundle 'Pydiction'
 Bundle 'scrooloose/nerdtree'
+Bundle 'scrooloose/nerdcommenter'
 Bundle 'altercation/vim-colors-solarized'
 Bundle 'Lokaltog/powerline'
 Bundle 'tpope/vim-fugitive'
+Bundle 'bling/vim-airline'
 Bundle 'ctrlpvim/ctrlp.vim'
 Bundle 'tacahiroy/ctrlp-funky'
+Bundle 'terryma/vim-expand-region'
 Bundle 'Tagbar'
-
-" ===NERDTree Setting===
+Bundle 'Supertab'
+" NERDTree Setting
 map <Leader>n :NERDTreeToggle<CR>
-function! NERDTreeHighlightFile(extension, fg, bg, guifg, guibg)
-exec 'autocmd filetype nerdtree highlight ' . a:extension .' ctermbg='.a:bg.' ctermfg='. a:fg .' guibg='. a:guibg .' guifg='. a:guifg
-exec 'autocmd filetype nerdtree syn match ' . a:extension .'#^\s\+.*'.a:extension .'$#'
-endfunction
+let NERDTreeWinPos='left'
+let NERDTreeWinSize=30
+"function! NERDTreeHighlightFile(extension, fg, bg, guifg, guibg)
+"exec 'autocmd filetype nerdtree highlight ' . a:extension .' ctermbg='.a:bg.' ctermfg='. a:fg .' guibg='. a:guibg .' guifg='. a:guifg
+"exec 'autocmd filetype nerdtree syn match ' . a:extension .'#^\s\+.*'.a:extension .'$#'
+"endfunction
 
-" ===Ctrlpvim Setting===
+" Ctrlpvim Setting
 let g:ctrlp_map = '<leader>p'
 let g:ctrlp_cmd = 'CtrlP'
 map <Leader>f :CtrlPMRU<CR>
@@ -228,20 +213,62 @@ let g:ctrlp_custom_ignore = {
     \ }
 let g:ctrlp_working_path_mode=0
 let g:ctrlp_match_window_bottom=1
-let g:ctrlp_max_height=15
+let g:ctrlp_max_height= 15
 let g:ctrlp_match_window_reversed=0
 let g:ctrlp_mruf_max=500
 let g:ctrlp_follow_symlinks=1
 
-" ===Ctrlpfunky Setting===
+" Ctrlpfunky Setting
 nnoremap <Leader>fu :CtrlPFunky<Cr>
 nnoremap <Leader>fU :execute 'CtrlPFunky ' . expand('<cword>')<Cr>
 let g:ctrlp_funky_syntax_highlight = 1
 let g:ctrlp_extensions = ['funky']
 
-" ===Tagbar Setting===
+" Tagbar Setting
 nmap <Leader>tb :TagbarToggle<CR>   
 let g:tagbar_ctags_bin="~/.vim/ctags"
 let g:tagbar_width = 20     
 let g:tagbar_left = 1
 let NERDTreeIgnore=['\.pyc', '\.pyo', '\.swp', '\~']
+
+" Vim airline Setting
+let g:airline_section_b = '%{strftime("%c")}'
+let g:airline_section_y = 'BN: %{bufnr("%")}'
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#left_sep = ' '
+let g:airline#extensions#tabline#left_alt_sep = '|'
+set laststatus=2
+
+"========================================================
+"" 其他插件
+"========================================================
+" SnipMate stuff
+let g:snips_author = 'Zhang Lei'
+let g:snips_dir='~/.vim/snippets'
+
+" Set location for NetrW bookmarks and history
+let g:netrw_home=$HOME
+
+" OCaml stuff
+let no_ocaml_comments = 1
+set makeprg=ocamlbuild\ ${BUILDFLAGS}\ -use-ocamlfind\ all.otarget
+
+" Syntastic
+" let g:syntastic_ocaml_use_ocamlc = 1
+let g:syntastic_ocaml_use_ocamlbuild = 1
+let g:syntastic_ocaml_checkers = ['merlin']
+
+" Currently disabled
+" let g:pathogen_disabled = ['syntastic', 'ocamlmerlin']
+set ofu=syntaxcomplete#Complete
+
+" Load Pathogen
+call pathogen#infect()
+
+" Load matchit
+runtime! macros/matchit.vim
+
+
+if filereadable(expand('~/.vimrc_local'))
+  source ~/.vimrc_local
+endif
