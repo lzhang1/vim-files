@@ -3,6 +3,9 @@ vim-files
 
 Using git to manage the Vim settings for my daily work.
 
+Firstly, you should have vundle to manage your plugin
+
+git clone https://github.com/gmarik/vundle.git $HOME/.vim/bundle/vundle
 
 Setup
 -----
