@@ -7,10 +7,10 @@ filetype plugin indent on
 " 不兼容模式
 set nocompatible
 
+set cursorline
+
 " 设置颜色方案
 set background=dark
-colorscheme solarized
-let g:solarized_termtrans=1
 
 " 语法高亮
 syntax enable
@@ -67,9 +67,9 @@ set numberwidth=4
 set autoread
 
 " 设置窗口
-set columns=120
-set lines=40
-winpo 620 45
+" set columns=120
+" set lines=40
+" winpo 620 45
 
 " 设置折叠
 set foldenable
@@ -108,22 +108,13 @@ au BufRead,BufNewFile *.sh setfiletype sh
 au BufRead,BufNewFile *.py setfiletype python
 autocmd BufNewFile *.py,*.sh exec ":call SetTitle()" 
 func SetTitle() 
-    call setline(1,"\#########################################################################") 
-    call append(line("."), "\# File Name: ".expand("%")) 
-    call append(line(".")+1, "\# Description: ") 
-    call append(line(".")+2, "\# Author: zhanglei") 
-    call append(line(".")+3, "\# Mail: zhlei315@163.com") 
-    call append(line(".")+4, "\# Created_Time: ".strftime("%Y-%m-%d %H:%M:%S")) 
-    call append(line(".")+5, "\# Last modified: ".strftime("%Y-%m-%d %H:%M:%S"))
     if &filetype == 'python'
-        call append(line(".")+6, "\#!/usr/bin/env python")
-        call append(line(".")+7, "\# -*- coding: utf-8 -*-")
-        call append(line(".")+8, "\#########################################################################") 
-        call append(line(".")+9, "") 
+        call setline(1,"\#!/usr/bin/env python") 
+        call append(line("."), "\# -*- coding: utf-8 -*-")
+        call append(line(".")+1, "") 
     else
-        call append(line(".")+6, "\#!/bin/bash")
-        call append(line(".")+7, "\#########################################################################") 
-        call append(line(".")+8, "")
+        call setline(1,"\#!/bin/bash") 
+        call append(line("."), "")
     endif
     autocmd BufNewFile * normal G
 endfunc
@@ -188,12 +179,6 @@ Bundle 'scrooloose/nerdcommenter'
 Bundle 'altercation/vim-colors-solarized'
 Bundle 'Lokaltog/powerline'
 Bundle 'tpope/vim-fugitive'
-Bundle 'bling/vim-airline'
-Bundle 'ctrlpvim/ctrlp.vim'
-Bundle 'tacahiroy/ctrlp-funky'
-Bundle 'terryma/vim-expand-region'
-Bundle 'Tagbar'
-Bundle 'Supertab'
 " NERDTree Setting
 map <Leader>n :NERDTreeToggle<CR>
 let NERDTreeWinPos='left'
@@ -261,9 +246,6 @@ let g:syntastic_ocaml_checkers = ['merlin']
 " Currently disabled
 " let g:pathogen_disabled = ['syntastic', 'ocamlmerlin']
 set ofu=syntaxcomplete#Complete
-
-" Load Pathogen
-call pathogen#infect()
 
 " Load matchit
 runtime! macros/matchit.vim
